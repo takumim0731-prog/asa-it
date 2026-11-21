@@ -68,10 +68,16 @@ python -m http.server 8000             ← 画面を確認する（ブラウザ�
   - 画面（日付の切り替え、4択クイズ、正誤と解説、回答の記録をlocalStorageに保存、ダークモード対応）、しくみページ、設定画面（出題分野・問題数）を作成し、ブラウザで表示確認済み
   - 設定画面の「保存」は GitHub のリポジトリができるまで試せない（ステップ4の後に動作確認する）
   - 次はステップ3から再開する
-- [ ] ステップ3: GitHub Actionsで毎朝自動実行する
+- [x] ステップ3: GitHub Actionsで毎朝自動実行する
+  - `.github/workflows/daily.yml`。2026-11-21 に手動実行で動作確認済み（作成→コミット→Pages公開）
+  - 手動で作り直したいとき: GitHub の Actions タブ →「daily」→「Run workflow」、または `gh workflow run daily.yml`
+  - main への push では公開（deploy）だけ動き、カードは作らない（費用がかからない）
   - 実行は**平日（月〜金）の朝6時だけ**（費用を抑えるため。2026-11-21 に決定）。GitHub Actions の時刻はUTCなので、cronは `0 21 * * 0-4`（日〜木の21時UTC＝月〜金の6時JST）
   - 注意: 設定画面から config.json がコミットされることがあるので、Actions はデータをコミットする前に最新を取り込む（pull）こと
 - [ ] ステップ4: GitHub Pagesで公開し、PWAとしてAndroidのホーム画面に追加する
+  - リポジトリ: https://github.com/takumim0731-prog/asa-it （公開。コミットのメールはGitHubの非公開用アドレス）
+  - 公開済み: https://takumim0731-prog.github.io/asa-it/
+  - 残り: PWA化（manifest・アイコン）とホーム画面への追加、設定画面用のGitHubトークン作成と「保存」の動作確認
 
 ## 最初の版でやらないこと（後から足す候補）
 

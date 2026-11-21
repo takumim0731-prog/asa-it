@@ -34,7 +34,7 @@
       <ol class="flow">
         <li class="step loc-github">
           <span class="where">GitHub（クラウド）</span>
-          <span class="status todo">準備中・ステップ3</span>
+          <span class="status ok">稼働中</span>
           <h3>① 平日の朝6時に自動で起動</h3>
           <p>GitHub Actions が、月〜金の決まった時刻に <code>scripts/generate.py</code> を実行します。人が操作しなくても動きます。土日はお休みで、最新の金曜のカードが表示されます。出題分野と問題数は、設定画面で保存した <code>config.json</code> に従います。</p>
           <p class="terms">関連用語: ジョブスケジューリング、cron、バッチ処理</p>
@@ -58,7 +58,7 @@
 
         <li class="step loc-github">
           <span class="where">GitHub（クラウド）</span>
-          <span class="status ok">稼働中（今はPC上）</span>
+          <span class="status ok">稼働中</span>
           <h3>④ JSONファイルとして保存</h3>
           <p><code>data/2026-11-15.json</code> のように1日1ファイルで保存し、日付の一覧 <code>data/index.json</code> も更新します。データベースは使わず、ファイルだけで済ませています。</p>
           <p class="terms">関連用語: JSON、ファイル編成、バージョン管理（Git）</p>
@@ -66,7 +66,7 @@
 
         <li class="step loc-github">
           <span class="where">GitHub（クラウド）</span>
-          <span class="status todo">準備中・ステップ4</span>
+          <span class="status ok">稼働中</span>
           <h3>⑤ GitHub Pages が配信</h3>
           <p>画面のファイル（HTML・CSS・JavaScript）とJSONを、そのままWebで公開します。中身を計算するサーバーはなく、ファイルを渡すだけです。</p>
           <p class="terms">関連用語: 静的サイト、Webサーバ、CDN</p>
@@ -74,7 +74,7 @@
 
         <li class="step loc-phone">
           <span class="where">あなたのスマホ</span>
-          <span class="status ok">稼働中（今はPCのブラウザ）</span>
+          <span class="status ok">稼働中</span>
           <h3>⑥ ブラウザで表示、回答は端末に保存</h3>
           <p><code>app.js</code> がJSONを読んでカードを組み立てます。クイズの回答はブラウザの localStorage に保存し、どこにも送信しません。ホーム画面に追加するとアプリのように使えます（ステップ4）。</p>
           <p class="terms">関連用語: クライアントサイド処理、Webストレージ、PWA</p>
