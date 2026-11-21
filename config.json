@@ -10,5 +10,6 @@
     "開発手法",
     "業界動向"
   ],
-  "cards_per_day": 3
+  "cards_per_day": 3,
+  "paused": false
 }
