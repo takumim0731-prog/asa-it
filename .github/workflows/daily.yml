@@ -1,0 +1,90 @@
+# 朝ITの自動実行（GitHub Actions）
+#
+# やること:
+#   1. generate … 平日の朝6時に、カードを作って data/ に保存し、リポジトリにコミットする
+#   2. deploy   … 画面とデータを GitHub Pages に公開する
+#
+# 動くタイミング:
+#   - 平日の朝6時（自動）              → generate → deploy
+#   - Actions の画面から手動で実行      → generate → deploy（作り直したいとき）
+#   - main ブランチに変更が届いたとき   → deploy だけ（画面の修正や、設定画面での設定変更を公開）
+
+name: daily
+
+on:
+  schedule:
+    # GitHub Actions の時刻は UTC（日本時間 −9時間）。
+    # 「日〜木の21時(UTC)」＝「月〜金の6時(日本時間)」。混雑で数十分遅れることがある
+    - cron: "0 21 * * 0-4"
+  workflow_dispatch: # 手動実行のボタンを出す
+  push:
+    branches: [main]
+
+# 同時に2つ動いて、コミットや公開がぶつからないようにする
+concurrency:
+  group: daily
+  cancel-in-progress: false
+
+jobs:
+  generate:
+    # main への変更（push）のときは、カードを作らない（費用がかかるため）
+    if: github.event_name != 'push'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # data/ をコミットするため
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+          cache: pip # ライブラリのダウンロードを毎回しなくて済むようにする
+
+      - run: pip install -r requirements.txt
+
+      - name: カードを作る
+        run: python scripts/generate.py
+        env:
+          # APIキーはリポジトリの Secrets から渡す（ログには表示されない）
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          PYTHONIOENCODING: utf-8
+
+      - name: data/ をコミットする
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data
+          if git diff --cached --quiet; then
+            echo "変更なし"
+            exit 0
+          fi
+          git commit -m "カードを追加: $(TZ=Asia/Tokyo date +%F)"
+          # 実行中に設定画面から config.json が更新されているかもしれないので、最新を取り込んでから送る
+          git pull --rebase origin main
+          git push origin HEAD:main
+
+  deploy:
+    needs: generate
+    # generate が成功したとき、または push で generate を飛ばしたときに公開する
+    if: always() && (needs.generate.result == 'success' || needs.generate.result == 'skipped')
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write # GitHub Pages に公開するため
+      id-token: write # 公開先が本物の GitHub Pages であることの確認に使う
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      # generate が今コミットした data/ も含めるため、main の最新を取得する
+      - uses: actions/checkout@v7
+        with:
+          ref: main
+
+      - uses: actions/configure-pages@v6
+
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: .
+
+      - id: deployment
+        uses: actions/deploy-pages@v5

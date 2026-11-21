@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#1f6f5c">
+  <title>朝IT の設定</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="top">
+    <a class="top-link left" href="index.html">‹ 戻る</a>
+    <h1>設定</h1>
+  </header>
+
+  <main class="about">
+
+    <!-- ===== 出題の設定（GitHub の config.json に保存） ===== -->
+    <section class="card">
+      <h2>出題分野</h2>
+      <p class="lead">選んだ分野のニュースだけでカードを作ります。1つ以上選んでください。</p>
+      <div class="quick">
+        <button type="button" class="small-btn" id="all-on">すべて選ぶ</button>
+        <button type="button" class="small-btn" id="all-off">すべて外す</button>
+      </div>
+      <div id="categories" class="checks"></div>
+    </section>
+
+    <section class="card">
+      <h2>1日の問題数</h2>
+      <div class="count-row">
+        <select id="count"></select>
+        <span id="cost" class="cost"></span>
+      </div>
+    </section>
+
+    <section class="card">
+      <button type="button" id="save" class="primary-btn">保存する</button>
+      <p id="status" class="status-msg"></p>
+      <p class="note">💡 保存した設定は、<b>翌朝のカード</b>から反映されます。今日のカードは変わりません。</p>
+    </section>
+
+    <!-- ===== GitHub との接続（この端末だけに保存） ===== -->
+    <section class="card">
+      <details id="connection">
+        <summary><h2 class="inline">GitHub との接続</h2></summary>
+        <p class="lead">設定を GitHub に保存するための情報です。この端末のブラウザにだけ保存され、ほかには送られません（GitHub への保存時を除く）。</p>
+        <label class="field">ユーザー名（owner）<input id="owner" autocomplete="off" autocapitalize="off"></label>
+        <label class="field">リポジトリ名（repo）<input id="repo" autocomplete="off" autocapitalize="off"></label>
+        <label class="field">アクセストークン<input id="token" type="password" autocomplete="off" placeholder="github_pat_…"></label>
+        <button type="button" id="save-conn" class="small-btn">接続情報を保存</button>
+        <p id="conn-status" class="status-msg"></p>
+        <p class="note">🔒 トークンは「Fine-grained token」で、<b>このリポジトリだけ</b>・<b>Contents の Read and write だけ</b>の権限にしてください。万一漏れても、できることがこのリポジトリの書き換えに限られます。</p>
+      </details>
+    </section>
+
+  </main>
+
+  <script type="module" src="settings.js"></script>
+</body>
+</html>

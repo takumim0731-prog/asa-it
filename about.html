@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#1f6f5c">
+  <title>朝IT のしくみ</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="top">
+    <a class="top-link left" href="index.html">‹ 戻る</a>
+    <h1>朝IT のしくみ</h1>
+  </header>
+
+  <main class="about">
+
+    <!-- ===== 今のデータ（data/ から読み込んで表示） ===== -->
+    <section class="card">
+      <h2>いま表示しているデータ</h2>
+      <dl class="facts">
+        <dt>最新の日付</dt><dd id="f-date">—</dd>
+        <dt>保存されている日数</dt><dd id="f-days">—</dd>
+        <dt>カードを作ったAI</dt><dd id="f-model">—</dd>
+        <dt>この端末での回答数</dt><dd id="f-answers">—</dd>
+      </dl>
+    </section>
+
+    <!-- ===== 全体の流れ ===== -->
+    <section class="card">
+      <h2>毎朝、カードが届くまで</h2>
+      <p class="lead">夜のうちに材料を集めてAIがカードを作り、ファイルにして置いておく。スマホはそのファイルを読むだけ、という作りです。</p>
+
+      <ol class="flow">
+        <li class="step loc-github">
+          <span class="where">GitHub（クラウド）</span>
+          <span class="status todo">準備中・ステップ3</span>
+          <h3>① 平日の朝6時に自動で起動</h3>
+          <p>GitHub Actions が、月〜金の決まった時刻に <code>scripts/generate.py</code> を実行します。人が操作しなくても動きます。土日はお休みで、最新の金曜のカードが表示されます。出題分野と問題数は、設定画面で保存した <code>config.json</code> に従います。</p>
+          <p class="terms">関連用語: ジョブスケジューリング、cron、バッチ処理</p>
+        </li>
+
+        <li class="step loc-web">
+          <span class="where">ニュースサイト</span>
+          <span class="status ok">稼働中</span>
+          <h3>② RSSで記事を集める</h3>
+          <p>MONOist、ITmedia、@IT、Publickey、IPA、JPCERT/CC の7つの配信から、直近72時間の記事を集めます。過去7日のカードと同じ記事は除きます。</p>
+          <p class="terms">関連用語: RSS、XML、HTTPS</p>
+        </li>
+
+        <li class="step loc-ai">
+          <span class="where">Anthropic（AIサービス）</span>
+          <span class="status ok">稼働中</span>
+          <h3>③ Claude がカードを作る</h3>
+          <p>候補の記事一覧を Claude API に送り、3本を選んで要約・工場目線・質問・クイズを作ってもらいます。返事の形（JSONスキーマ）を指定しているので、決まった形で返ってきます。</p>
+          <p class="terms">関連用語: API、APIキー（認証）、構造化データ、従量課金</p>
+        </li>
+
+        <li class="step loc-github">
+          <span class="where">GitHub（クラウド）</span>
+          <span class="status ok">稼働中（今はPC上）</span>
+          <h3>④ JSONファイルとして保存</h3>
+          <p><code>data/2026-11-15.json</code> のように1日1ファイルで保存し、日付の一覧 <code>data/index.json</code> も更新します。データベースは使わず、ファイルだけで済ませています。</p>
+          <p class="terms">関連用語: JSON、ファイル編成、バージョン管理（Git）</p>
+        </li>
+
+        <li class="step loc-github">
+          <span class="where">GitHub（クラウド）</span>
+          <span class="status todo">準備中・ステップ4</span>
+          <h3>⑤ GitHub Pages が配信</h3>
+          <p>画面のファイル（HTML・CSS・JavaScript）とJSONを、そのままWebで公開します。中身を計算するサーバーはなく、ファイルを渡すだけです。</p>
+          <p class="terms">関連用語: 静的サイト、Webサーバ、CDN</p>
+        </li>
+
+        <li class="step loc-phone">
+          <span class="where">あなたのスマホ</span>
+          <span class="status ok">稼働中（今はPCのブラウザ）</span>
+          <h3>⑥ ブラウザで表示、回答は端末に保存</h3>
+          <p><code>app.js</code> がJSONを読んでカードを組み立てます。クイズの回答はブラウザの localStorage に保存し、どこにも送信しません。ホーム画面に追加するとアプリのように使えます（ステップ4）。</p>
+          <p class="terms">関連用語: クライアントサイド処理、Webストレージ、PWA</p>
+        </li>
+      </ol>
+    </section>
+
+    <!-- ===== どこに何があるか ===== -->
+    <section class="card">
+      <h2>どこに何が置かれているか</h2>
+      <table class="where-table">
+        <tr><th>置き場所</th><th>置いてあるもの</th></tr>
+        <tr><td>GitHub</td><td>プログラム、毎日のJSON、出題の設定（config.json）、APIキー（Secretsに暗号化して保管）</td></tr>
+        <tr><td>Anthropic</td><td>AIモデル本体。呼ばれたときだけ動く</td></tr>
+        <tr><td>スマホ</td><td>クイズの回答記録と、設定を保存するためのGitHubのトークン</td></tr>
+      </table>
+      <p class="note">🔒 スマホからAIを直接呼ぶことはありません。APIキーはGitHubの中だけにあり、スマホやWebページには出てきません。スマホにあるGitHubのトークンは、このリポジトリの書き換えだけに権限を絞っています。</p>
+    </section>
+
+    <!-- ===== なぜこの構成か ===== -->
+    <section class="card">
+      <h2>なぜこの作りにしたか</h2>
+      <ul class="reasons">
+        <li><b>まとめて作り置き（バッチ処理）</b><br>開くたびにAIを呼ぶと、待ち時間と費用がかかります。1日1回だけ作れば、画面はすぐ開き、費用も一定です。</li>
+        <li><b>自分でサーバーを持たない</b><br>GitHub Actions と Pages は無料枠で使えます。サーバーの保守やOS更新の手間がなく、かかるのはAPI代だけです。</li>
+        <li><b>データベースを使わない</b><br>1日3枚程度ならJSONファイルで十分です。中身を人が読めて、Gitで変更履歴も残ります。</li>
+      </ul>
+    </section>
+
+    <!-- ===== 費用 ===== -->
+    <section class="card">
+      <h2>かかる費用</h2>
+      <p>1回の生成（3問）で約0.11〜0.12ドル（入力 約7,600 ＋ 出力 約4,000トークン）。平日だけ作るので、月350円前後です。料金はAIが読んだ量と書いた量（トークン数）で決まり、アプリを開いたかどうかには関係ありません。</p>
+    </section>
+
+  </main>
+
+  <script type="module">
+    // data/ のファイルと、この端末の回答記録から「いまの状態」を表示する
+    const set = (id, text) => (document.getElementById(id).textContent = text);
+
+    try {
+      const { dates } = await (await fetch("data/index.json", { cache: "no-cache" })).json();
+      set("f-days", `${dates.length}日分`);
+      if (dates.length > 0) {
+        set("f-date", dates[0]);
+        const day = await (await fetch(`data/${dates[0]}.json`, { cache: "no-cache" })).json();
+        set("f-model", day.model);
+      }
+    } catch {
+      set("f-date", "読み込めませんでした");
+    }
+
+    try {
+      const answers = JSON.parse(localStorage.getItem("asa-it:answers")) || {};
+      const count = Object.values(answers).reduce((n, day) => n + Object.keys(day).length, 0);
+      set("f-answers", `${count}問`);
+    } catch {
+      set("f-answers", "確認できません");
+    }
+  </script>
+</body>
+</html>

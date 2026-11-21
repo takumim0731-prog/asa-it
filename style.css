@@ -1,0 +1,217 @@
+/* ===== 色の定義（ここを変えれば全体の色が変わる） ===== */
+:root {
+  --bg: #f4f3ef;
+  --card: #ffffff;
+  --text: #22252a;
+  --muted: #6b6f76;
+  --line: #e2e0da;
+  --accent: #1f6f5c;
+  --ok: #1e7b45;
+  --ok-bg: #e3f4ea;
+  --ng: #b3392f;
+  --ng-bg: #fbe7e5;
+}
+
+/* スマホがダークモードのときの色 */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #15171a;
+    --card: #1f2226;
+    --text: #e8e6e1;
+    --muted: #9a9ea5;
+    --line: #33373d;
+    --accent: #5cc0a3;
+    --ok: #6fd39a;
+    --ok-bg: #1d3328;
+    --ng: #f08a80;
+    --ng-bg: #3a2220;
+  }
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: system-ui, -apple-system, "Hiragino Sans", "Noto Sans JP", sans-serif;
+  font-size: 16px;
+  line-height: 1.75;
+}
+
+/* ===== 上部（タイトル・日付・正解数） ===== */
+.top {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: var(--bg);
+  border-bottom: 1px solid var(--line);
+  padding: 10px 16px 8px;
+  text-align: center;
+}
+.top h1 { margin: 0; font-size: 18px; color: var(--accent); letter-spacing: .1em; }
+.date-nav { display: flex; align-items: center; justify-content: center; gap: 12px; }
+.date-nav button {
+  width: 40px; height: 40px;
+  border: 1px solid var(--line); border-radius: 50%;
+  background: var(--card); color: var(--text);
+  font-size: 22px; line-height: 1; cursor: pointer;
+}
+.date-nav button:disabled { opacity: .3; cursor: default; }
+#date { font-weight: 700; min-width: 9em; }
+.score { margin: 2px 0 0; font-size: 13px; color: var(--muted); min-height: 1.5em; }
+
+/* ===== カード ===== */
+main { max-width: 680px; margin: 0 auto; padding: 16px; }
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 18px 16px;
+  margin-bottom: 20px;
+}
+.tag {
+  display: inline-block;
+  font-size: 12px; font-weight: 700;
+  padding: 2px 10px; border-radius: 99px;
+  background: var(--accent); color: var(--card);
+}
+.card h2 { font-size: 19px; line-height: 1.5; margin: 8px 0 4px; }
+.source { font-size: 13px; color: var(--muted); margin: 0 0 8px; }
+.source a { color: var(--accent); }
+
+.section { border-top: 1px dashed var(--line); padding-top: 10px; margin-top: 12px; }
+.section h3 { font-size: 14px; margin: 0 0 4px; color: var(--muted); }
+.section p { margin: 0; }
+
+/* ===== クイズ ===== */
+.choices { display: grid; gap: 8px; margin-top: 8px; }
+.choice {
+  text-align: left;
+  font: inherit; color: var(--text);
+  background: var(--bg);
+  border: 1px solid var(--line); border-radius: 10px;
+  padding: 10px 12px;
+  cursor: pointer;
+}
+.choice:disabled { cursor: default; }
+.choice.correct { background: var(--ok-bg); border-color: var(--ok); }
+.choice.wrong { background: var(--ng-bg); border-color: var(--ng); }
+
+.result { font-weight: 700; margin: 10px 0 4px; }
+.result.ok { color: var(--ok); }
+.result.ng { color: var(--ng); }
+.explanation { margin: 0; }
+
+.message { text-align: center; color: var(--muted); padding: 40px 0; }
+
+/* ===== 上部のリンク（しくみ / 戻る） ===== */
+.top-link {
+  position: absolute; top: 12px;
+  font-size: 14px; color: var(--accent); text-decoration: none;
+}
+.top-link.right { right: 16px; }
+.top-link.left { left: 16px; }
+
+/* ===== しくみページ ===== */
+.about h2 { font-size: 17px; margin: 0 0 8px; }
+.about .lead { margin: 0 0 12px; }
+.about code {
+  font-size: 13px; background: var(--bg);
+  border: 1px solid var(--line); border-radius: 4px; padding: 0 4px;
+  word-break: break-all;
+}
+
+.facts { display: grid; grid-template-columns: auto 1fr; gap: 4px 12px; margin: 0; }
+.facts dt { color: var(--muted); font-size: 14px; }
+.facts dd { margin: 0; font-weight: 700; }
+
+/* 流れ図: 縦に並べた箱を矢印でつなぐ */
+.flow { list-style: none; margin: 0; padding: 0; }
+.step {
+  position: relative;
+  border: 1px solid var(--line); border-left: 5px solid var(--loc);
+  border-radius: 10px;
+  padding: 10px 12px;
+  background: var(--bg);
+}
+.step + .step { margin-top: 28px; }
+.step + .step::before {               /* 箱と箱の間の下向き矢印 */
+  content: "▼";
+  position: absolute; top: -25px; left: 50%; transform: translateX(-50%);
+  color: var(--muted); font-size: 14px;
+}
+.step h3 { font-size: 15px; margin: 4px 0; }
+.step p { margin: 0 0 4px; font-size: 15px; }
+.step .terms { font-size: 13px; color: var(--muted); margin: 0; }
+
+/* 場所ごとの色（左の線と「どこで」ラベル） */
+.loc-github { --loc: #6e5bc4; }
+.loc-web    { --loc: #c4842b; }
+.loc-ai     { --loc: #c4574a; }
+.loc-phone  { --loc: #1f8a6e; }
+.where {
+  display: inline-block; font-size: 12px; font-weight: 700;
+  color: var(--loc);
+}
+.status {
+  float: right; font-size: 11px; font-weight: 700;
+  padding: 1px 8px; border-radius: 99px; border: 1px solid;
+}
+.status.ok { color: var(--ok); border-color: var(--ok); }
+.status.todo { color: var(--muted); border-color: var(--line); }
+
+.where-table { width: 100%; border-collapse: collapse; font-size: 15px; }
+.where-table th, .where-table td {
+  text-align: left; vertical-align: top;
+  padding: 6px 8px; border-bottom: 1px solid var(--line);
+}
+.where-table th { font-size: 13px; color: var(--muted); }
+.where-table td:first-child { white-space: nowrap; font-weight: 700; }
+
+.note {
+  margin: 12px 0 0; padding: 10px 12px;
+  background: var(--bg); border-radius: 10px; font-size: 14px;
+}
+.reasons { margin: 0; padding-left: 1.2em; }
+.reasons li + li { margin-top: 10px; }
+
+/* ===== 設定ページ ===== */
+.checks { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 8px; }
+.check {
+  display: flex; align-items: center; gap: 8px;
+  border: 1px solid var(--line); border-radius: 10px;
+  padding: 8px 10px; background: var(--bg); cursor: pointer;
+}
+.check input { width: 18px; height: 18px; accent-color: var(--accent); }
+.quick { display: flex; gap: 8px; margin-bottom: 10px; }
+
+.small-btn, .primary-btn {
+  font: inherit; cursor: pointer; border-radius: 10px;
+}
+.small-btn {
+  font-size: 14px; padding: 6px 12px;
+  border: 1px solid var(--line); background: var(--card); color: var(--text);
+}
+.primary-btn {
+  width: 100%; padding: 12px; font-weight: 700;
+  border: none; background: var(--accent); color: var(--card);
+}
+.primary-btn:disabled { opacity: .5; cursor: default; }
+
+.count-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.count-row select, .field input {
+  font: inherit; color: var(--text); background: var(--bg);
+  border: 1px solid var(--line); border-radius: 8px; padding: 6px 10px;
+}
+.cost { font-size: 14px; color: var(--muted); }
+
+.status-msg { margin: 8px 0 0; font-size: 14px; min-height: 1.5em; }
+.status-msg.ok { color: var(--ok); }
+.status-msg.ng { color: var(--ng); }
+
+details summary { cursor: pointer; }
+h2.inline { display: inline; }
+.field { display: block; font-size: 14px; color: var(--muted); margin-bottom: 10px; }
+.field input { display: block; width: 100%; margin-top: 4px; }

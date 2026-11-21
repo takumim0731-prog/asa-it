@@ -1,0 +1,5 @@
+# APIキーなどの秘密情報。絶対にGitHubへ上げない
+.env
+
+# Pythonが自動で作るキャッシュ
+__pycache__/
