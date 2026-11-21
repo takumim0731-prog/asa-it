@@ -154,6 +154,11 @@ async function main() {
   document.getElementById("prev").addEventListener("click", () => showDay(current + 1));
   document.getElementById("next").addEventListener("click", () => showDay(current - 1));
 
+  // 自動作成が一時停止中なら、お知らせを出す（読めなくてもカード表示には影響させない）
+  fetchJson("config.json")
+    .then((config) => (document.getElementById("paused-banner").hidden = config.paused !== true))
+    .catch(() => {});
+
   try {
     dates = (await fetchJson("data/index.json")).dates;
   } catch (e) {

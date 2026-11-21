@@ -17,6 +17,15 @@
 
     <!-- ===== 出題の設定（GitHub の config.json に保存） ===== -->
     <section class="card">
+      <h2>カードの自動作成</h2>
+      <label class="check pause">
+        <input type="checkbox" id="paused">
+        一時停止する（APIを呼ばないので費用がかからない）
+      </label>
+      <p class="lead small">停止中は新しいカードが作られません。これまでのカードは読めます。チェックを外して保存すると、翌朝から再開します。</p>
+    </section>
+
+    <section class="card">
       <h2>出題分野</h2>
       <p class="lead">選んだ分野のニュースだけでカードを作ります。1つ以上選んでください。</p>
       <div class="quick">

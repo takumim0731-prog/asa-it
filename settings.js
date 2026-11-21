@@ -161,7 +161,8 @@ async function saveConfig() {
     return;
   }
 
-  const config = { categories, cards_per_day: Number($("count").value) };
+  const paused = $("paused").checked;
+  const config = { categories, cards_per_day: Number($("count").value), paused };
   const button = $("save");
   button.disabled = true;
   setStatus("status", "保存しています…");
@@ -169,11 +170,15 @@ async function saveConfig() {
     // 上書きするには、今のファイルの版の番号（sha）が必要
     const current = await github("GET", conn);
     await github("PUT", conn, {
-      message: `設定を変更: ${config.cards_per_day}問 / ${categories.join("・")}`,
+      message: paused ? "設定を変更: 自動作成を一時停止" : `設定を変更: ${config.cards_per_day}問 / ${categories.join("・")}`,
       content: toBase64(JSON.stringify(config, null, 2) + "\n"),
       sha: current.sha,
     });
-    setStatus("status", "✅ 保存しました。翌朝のカードから反映されます。", "ok");
+    setStatus(
+      "status",
+      paused ? "✅ 保存しました。自動作成を一時停止しました（翌朝から費用がかかりません）。" : "✅ 保存しました。翌朝のカードから反映されます。",
+      "ok"
+    );
   } catch (e) {
     setStatus("status", `保存できませんでした: ${e.message}`, "ng");
   } finally {
@@ -214,6 +219,7 @@ async function main() {
     const config = await loadCurrentConfig();
     renderCategories(config.categories || categoryNames);
     renderCount(config.cards_per_day || 3);
+    $("paused").checked = config.paused === true;
   } catch {
     setStatus("status", "設定を読み込めませんでした。", "ng");
   }

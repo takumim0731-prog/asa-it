@@ -26,7 +26,7 @@
 
 分野タグ: 工場・OT / インフラ / ネットワーク / クラウド / データ活用 / AI / セキュリティ / 開発手法 / 業界動向（各分野の中身は `categories.json`）
 
-出題分野と1日の問題数（1〜5問）は、画面の「設定」から変更できる。設定は GitHub の `config.json` に保存され、翌朝のカードから反映される（`config.json` を直接編集してもよい）。
+出題分野と1日の問題数（1〜5問）、自動作成の一時停止（停止中はAPIを呼ばないので費用0円）は、画面の「設定」から変更できる。設定は GitHub の `config.json` に保存され、翌朝のカードから反映される（`config.json` を直接編集してもよい）。
 
 ニュースの取得元（RSS）: MONOist、ITmedia NEWS、ITmedia エンタープライズ、@IT、Publickey、IPA、JPCERT/CC
 

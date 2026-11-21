@@ -52,9 +52,9 @@ JST = timezone(timedelta(hours=9))              # 日本時間
 CATEGORY_GUIDE: dict[str, str] = json.loads((ROOT / "categories.json").read_text(encoding="utf-8"))
 
 
-def load_config() -> tuple[list[str], int]:
-    """config.json から「出題分野」と「1日の枚数」を読む。
-    ファイルがない・中身がおかしいときは、全分野・3枚にする（毎朝の自動実行を止めないため）"""
+def load_config() -> tuple[list[str], int, bool]:
+    """config.json から「出題分野」「1日の枚数」「一時停止中かどうか」を読む。
+    ファイルがない・中身がおかしいときは、全分野・3枚・停止なしにする（毎朝の自動実行を止めないため）"""
     try:
         config = json.loads((ROOT / "config.json").read_text(encoding="utf-8"))
     except (FileNotFoundError, json.JSONDecodeError):
@@ -69,7 +69,9 @@ def load_config() -> tuple[list[str], int]:
     except (TypeError, ValueError):
         count = 3
     count = min(max(count, 1), MAX_CARDS)   # 1〜MAX_CARDS の範囲に収める
-    return categories, count
+
+    paused = config.get("paused") is True   # 設定画面で「一時停止」にすると true になる
+    return categories, count, paused
 
 
 # ===== 1. 記事を集める =====
@@ -273,7 +275,11 @@ def main():
     load_dotenv(ROOT / ".env")   # .env ファイルがあれば、そこからAPIキーを読む
     dry_run = "--dry-run" in sys.argv
     today = datetime.now(JST).strftime("%Y-%m-%d")
-    categories, count = load_config()
+    categories, count, paused = load_config()
+    if paused and not dry_run:
+        # APIを呼ばずに終わる（費用はAPIを呼んだときだけかかるので、停止中は0円）
+        print("一時停止中なので、カードは作りません（設定画面で再開できます）")
+        return
     print(f"設定: {count}枚 / 分野 {'・'.join(categories)}")
 
     print("① 記事を集めています…")
