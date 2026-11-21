@@ -151,6 +151,11 @@ async function showDay(index) {
 
 // ===== 起動 =====
 async function main() {
+  // Service Worker を登録する（圏外でも前回のカードを読めるようにするため。sw.js を参照）
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("sw.js").catch(() => {});
+  }
+
   document.getElementById("prev").addEventListener("click", () => showDay(current + 1));
   document.getElementById("next").addEventListener("click", () => showDay(current - 1));
 
