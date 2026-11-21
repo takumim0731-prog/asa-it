@@ -74,10 +74,13 @@ python -m http.server 8000             ← 画面を確認する（ブラウザ�
   - main への push では公開（deploy）だけ動き、カードは作らない（費用がかからない）
   - 実行は**平日（月〜金）の朝6時だけ**（費用を抑えるため。2026-11-21 に決定）。GitHub Actions の時刻はUTCなので、cronは `0 21 * * 0-4`（日〜木の21時UTC＝月〜金の6時JST）
   - 注意: 設定画面から config.json がコミットされることがあるので、Actions はデータをコミットする前に最新を取り込む（pull）こと
-- [ ] ステップ4: GitHub Pagesで公開し、PWAとしてAndroidのホーム画面に追加する
+- [x] ステップ4: GitHub Pagesで公開し、PWAとしてAndroidのホーム画面に追加する
   - リポジトリ: https://github.com/takumim0731-prog/asa-it （公開。コミットのメールはGitHubの非公開用アドレス）
   - 公開済み: https://takumim0731-prog.github.io/asa-it/
-  - 残り: PWA化（manifest・アイコン）とホーム画面への追加、設定画面用のGitHubトークン作成と「保存」の動作確認
+  - PWA化済み: `manifest.webmanifest`、`icons/`（`scripts/make_icons.py` で作成）、`sw.js`（ネットワーク優先・圏外ならキャッシュ）
+  - 2026-11-21 にAndroidのホーム画面へ追加し、設定画面からの保存（config.jsonのコミット）も動作確認済み
+  - 設定画面用のトークン: Fine-grained token「asa-it-settings」（asa-itのContentsの読み書きのみ、期限1年）。スマホのブラウザにだけ保存。期限が切れたら作り直して設定画面に入れ直す（切れてもカード作成は止まらない）
+  - 開発メモ: 2026-11-21 に一度、Pages公開が GitHub 側の一時的なエラー（artifact が見つからない）で失敗した。次の公開で解消したので、同じことが起きたら Actions から再実行すればよい
 
 ## 最初の版でやらないこと（後から足す候補）
 
